@@ -122,7 +122,7 @@ namespace k95TestSite
                     if (EternalHearts == 1)
                     {
                         int location = Math.Min(RedHearts + 1, MaxRedHearts);
-                        keyBoard[HealthKeys[location / 2]].Led.Color = Color.White;
+                        keyBoard[HealthKeys[(location / 2) - 1]].Led.Color = Color.White;
                     }
                     if (ENABLE_G_KEYS)
                     {
