@@ -14,13 +14,20 @@ namespace k95TestSite
 {
     class IsaacKeyboard
     {
+        bool ENABLE_G_KEYS = true;
         private static CorsairKeyboard keyBoard;
         int MaxRedHearts;
         int RedHearts;
         int EternalHearts;
         int SoulHearts;
         string BlackHearts;
-        CorsairKeyboardKeyId[] Keys = new CorsairKeyboardKeyId[12];
+        int Keys;
+        int Bombs;
+        int Coins;
+        CorsairKeyboardKeyId[] HealthKeys = new CorsairKeyboardKeyId[12];
+        CorsairKeyboardKeyId[] KeyKeys = new CorsairKeyboardKeyId[6];
+        CorsairKeyboardKeyId[] BombKeys = new CorsairKeyboardKeyId[6];
+        CorsairKeyboardKeyId[] CoinKeys = new CorsairKeyboardKeyId[6];
 
         private bool paused = false;
         public bool Pause = false;
@@ -43,13 +50,35 @@ namespace k95TestSite
             //register every F key except F12
             for (int i = 1; i < 12; i++)
             {
-                Keys[i-1] = (CorsairKeyboardKeyId)(i + 1);
-                Debug.WriteLine("-{0} Added-", Keys[i]);
+                HealthKeys[i-1] = (CorsairKeyboardKeyId)(i + 1);
+                Debug.WriteLine("-{0} Added-", HealthKeys[i]);
             }
             //Who made F12 equal to 73??
-            Keys[11] = CorsairKeyboardKeyId.F12;
-            Debug.WriteLine("-{0} Added-", Keys[11]);
-
+            HealthKeys[11] = CorsairKeyboardKeyId.F12;
+            Debug.WriteLine("-{0} Added-", HealthKeys[11]);
+            //register consumable key groups
+            if (keyBoard.DeviceInfo.Model == "K95 RGB")
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    CoinKeys[i] = (CorsairKeyboardKeyId)(i + 121);
+                    Debug.WriteLine("-{0} Added-", HealthKeys[i]);
+                }
+                for (int i = 0; i < 4; i++)
+                {
+                    BombKeys[i] = (CorsairKeyboardKeyId)(i + 127);
+                    Debug.WriteLine("-{0} Added-", HealthKeys[i]);
+                }
+                BombKeys[4] = CorsairKeyboardKeyId.G11;
+                BombKeys[5] = CorsairKeyboardKeyId.G12;
+                for (int i = 0; i < 6; i++)
+                {
+                    KeyKeys[i] = (CorsairKeyboardKeyId)(i + 139);
+                    Debug.WriteLine("-{0} Added-", HealthKeys[i]);
+                }
+            }
+            else
+                ENABLE_G_KEYS = false;
             //I'm keeping this here for future reference
             //keyBoard['A'].Led.Color = Color.Red;
             //keyBoard[CorsairKeyboardKeyId.Home].Led.Color = Color.White;
@@ -71,21 +100,21 @@ namespace k95TestSite
                     for (int i = 0; i < MaxRedHearts / 2; i++)
                     {
                         if (RedHearts - 1 > i * 2)
-                            keyBoard[Keys[i]].Led.Color =  Color.Red;
+                            keyBoard[HealthKeys[i]].Led.Color =  Color.Red;
                         else
                             if (RedHearts == (i * 2) + 1)
-                            keyBoard[Keys[i]].Led.Color = Color.FromArgb(128, 0, 0);
+                            keyBoard[HealthKeys[i]].Led.Color = Color.FromArgb(128, 0, 0);
                     }
                     //for each slot other than max hearts, make sure there's no soul hearts or black hearts there
                     for (int i = 0; i < 11 - (MaxRedHearts / 2); i++)
                     {
                         if (SoulHearts - 1 > i * 2)
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = 
+                            keyBoard[HealthKeys[i + MaxRedHearts / 2]].Led.Color = 
                                 BlackHearts[i] == '1' ?
                                 Color.Purple : Color.LightBlue;
                         else
                             if (SoulHearts == (i * 2) + 1)
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = 
+                            keyBoard[HealthKeys[i + MaxRedHearts / 2]].Led.Color = 
                                 BlackHearts[i] == '1' ?
                                 Color.FromArgb(40, 0, 40) : Color.FromArgb(255, 86, 108, 115);
                     }
@@ -93,7 +122,22 @@ namespace k95TestSite
                     if (EternalHearts == 1)
                     {
                         int location = Math.Min(RedHearts + 1, MaxRedHearts);
-                        keyBoard[Keys[location / 2]].Led.Color = Color.White;
+                        keyBoard[HealthKeys[location / 2]].Led.Color = Color.White;
+                    }
+                    if (ENABLE_G_KEYS)
+                    {
+                        for (int i = 0; i < Keys; i++)
+                        {
+                            keyBoard[KeyKeys[i]].Led.Color = Color.LightGray;
+                        }
+                        for (int i = 0; i < Bombs; i++)
+                        {
+                            keyBoard[BombKeys[i]].Led.Color = Color.Purple;
+                        }
+                        for (int i = 0; i < Coins/5; i++)
+                        {
+                            keyBoard[CoinKeys[i]].Led.Color = Color.Yellow;
+                        }
                     }
                 }
             }
@@ -113,14 +157,29 @@ namespace k95TestSite
             //this just sets all keys to black
             for (int i = 0; i < 12; i++)
             {
-                keyBoard[Keys[i]].Led.Color = Color.Black;
+                keyBoard[HealthKeys[i]].Led.Color = Color.Black;
+            }
+            if (ENABLE_G_KEYS)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    keyBoard[KeyKeys[i]].Led.Color = Color.Black;
+                }
+                for (int i = 0; i < 6; i++)
+                {
+                    keyBoard[BombKeys[i]].Led.Color = Color.Black;
+                }
+                for (int i = 0; i < 6; i++)
+                {
+                    keyBoard[CoinKeys[i]].Led.Color = Color.Black;
+                }
             }
         }
 
-        public void InputData(int MRH, int RH, int EH, int SH, string BH)
+        public void InputData(int MRH, int RH, int EH, int SH, string BH, int K, int B, int C)
         {
             //this takes the data from the second thread and puts our information into this class.... I should be doing this in c++
-            MaxRedHearts = MRH; RedHearts = RH; EternalHearts = EH; SoulHearts = SH; BlackHearts = BH;
+            MaxRedHearts = MRH; RedHearts = RH; EternalHearts = EH; SoulHearts = SH; BlackHearts = BH; Keys = K; Bombs = B; Coins = C;
         }
     }
 }

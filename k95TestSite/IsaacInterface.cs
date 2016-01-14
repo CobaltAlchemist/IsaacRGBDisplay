@@ -29,6 +29,9 @@ namespace k95TestSite
         IntPtr EternalHeartsOffset = (IntPtr)0x1b38;
         IntPtr SoulHeartsOffset = (IntPtr)0x1b3c;
         IntPtr BlackHeartsOffset = (IntPtr)0x1b40;
+        IntPtr KeysOffset = (IntPtr)0x1b4c;
+        IntPtr BombsOffset = (IntPtr)0x1b54;
+        IntPtr CoinsOffset = (IntPtr)0x1b58;
         //the offset to the player and the process's handle
         IntPtr FinalOffset;
         IntPtr processHandle;
@@ -100,13 +103,16 @@ namespace k95TestSite
         public byte[][] GetData()
         {
             //just packaging up the data
-            byte[][] toSend = new byte[5][];
+            byte[][] toSend = new byte[8][];
             byte[] buffer = ReadBulkData(MaxHeartsOffset);
             toSend[0] = buffer.Take(4).ToArray();
             toSend[1] = buffer.Skip(4).Take(4).ToArray();
             toSend[2] = buffer.Skip(8).Take(4).ToArray();
             toSend[3] = buffer.Skip(12).Take(4).ToArray();
             toSend[4] = buffer.Skip(16).Take(4).ToArray();
+            toSend[5] = ReadData(KeysOffset);
+            toSend[6] = ReadData(BombsOffset);
+            toSend[7] = ReadData(CoinsOffset);
             return toSend;
         }
 

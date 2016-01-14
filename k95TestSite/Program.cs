@@ -20,12 +20,14 @@ namespace k95TestSite
     {
         //volatile so that both threads can use them
         static volatile int[] hearts;
+        static volatile int[] consumables;
         static volatile string blackHearts;
         static volatile bool connected;
         const int Freq = 200;
         static void Main(string[] args)
         {
             hearts = new int[4];
+            consumables = new int[3];
             blackHearts = "NaN";
             connected = false;
             //Make a new thread to handle all the back end operations.
@@ -44,7 +46,7 @@ namespace k95TestSite
                         {
                             //Setting up all the intermediate data
                             byte[][] data = GameInterface.GetData();
-                            int maxH, redH, soulH, eterH;
+                            int maxH, redH, soulH, eterH, keys, bombs, coins;
                             string blackH = "";
                             //Inputting the data into the main variables
                             maxH = BitConverter.ToInt32(data[0], 0);
@@ -60,13 +62,18 @@ namespace k95TestSite
                             blackH = new string(blackH.Reverse().ToArray());
                             hearts[0] = maxH; hearts[1] = redH; hearts[2] = eterH; hearts[3] = soulH;
                             blackHearts = blackH;
+                            //store the consumable data
+                            keys = BitConverter.ToInt32(data[5], 0);
+                            bombs = BitConverter.ToInt32(data[6], 0);
+                            coins = BitConverter.ToInt32(data[7], 0);
+                            consumables[0] = keys; consumables[1] = bombs; consumables[2] = coins;
                             //calculate a bool to make sure the data is usable
                             bool validData = GameInterface.AnalyzeData(maxH, redH, eterH, soulH, blackH);
                             if (validData)
                             {
                                 //it's valid, so we're connected and we should input the data
                                 connected = true;
-                                k95.InputData(maxH, redH, eterH, soulH, blackH);
+                                k95.InputData(maxH, redH, eterH, soulH, blackH, keys, bombs, coins);
                             }
                             else
                             {
@@ -101,6 +108,9 @@ namespace k95TestSite
                 Console.WriteLine("Eternal Hearts: {0}", hearts[2]);
                 Console.WriteLine("Soul Hearts:    {0}", hearts[3]);
                 Console.WriteLine("Black Hearts:   {0}", blackHearts);
+                Console.WriteLine("Keys:           {0}", consumables[0]);
+                Console.WriteLine("Bombs:          {0}", consumables[1]);
+                Console.WriteLine("Coins:          {0}", consumables[2]);
                 Console.WriteLine("Press ESC to exit");
                 //if the thread died somehow, we might as well end this one too
                 if (!opThread.IsAlive)
