@@ -71,24 +71,23 @@ namespace k95TestSite
                     for (int i = 0; i < MaxRedHearts / 2; i++)
                     {
                         if (RedHearts - 1 > i * 2)
-                            keyBoard[Keys[i]].Led.Color = Color.Red;
+                            keyBoard[Keys[i]].Led.Color =  Color.Red;
                         else
                             if (RedHearts == (i * 2) + 1)
                             keyBoard[Keys[i]].Led.Color = Color.FromArgb(128, 0, 0);
                     }
                     //for each slot other than max hearts, make sure there's no soul hearts or black hearts there
-                    //***Streamline this later***
                     for (int i = 0; i < 11 - (MaxRedHearts / 2); i++)
                     {
                         if (SoulHearts - 1 > i * 2)
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = Color.LightBlue;
+                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = 
+                                BlackHearts[i] == '1' ?
+                                Color.Purple : Color.LightBlue;
                         else
                             if (SoulHearts == (i * 2) + 1)
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = Color.FromArgb(255, 86, 108, 115);
-                        if (BlackHearts[i] == '1')
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = Color.Purple;
-                        if (BlackHearts[i] == '1' && SoulHearts == (i * 2) + 1)
-                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = Color.FromArgb(255, 40, 0, 40);
+                            keyBoard[Keys[i + MaxRedHearts / 2]].Led.Color = 
+                                BlackHearts[i] == '1' ?
+                                Color.FromArgb(40, 0, 40) : Color.FromArgb(255, 86, 108, 115);
                     }
                     //ezpz check that eternal heart and do the thing
                     if (EternalHearts == 1)
