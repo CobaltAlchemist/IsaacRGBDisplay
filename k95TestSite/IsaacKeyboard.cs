@@ -126,15 +126,15 @@ namespace k95TestSite
                     }
                     if (ENABLE_G_KEYS)
                     {
-                        for (int i = 0; i < Keys; i++)
+                        for (int i = 0; i < Math.Min(Keys,6); i++)
                         {
                             keyBoard[KeyKeys[i]].Led.Color = Color.LightGray;
                         }
-                        for (int i = 0; i < Bombs; i++)
+                        for (int i = 0; i < Math.Min(Bombs,6); i++)
                         {
                             keyBoard[BombKeys[i]].Led.Color = Color.Purple;
                         }
-                        for (int i = 0; i < Coins/5; i++)
+                        for (int i = 0; i < Math.Min(Coins/5,6); i++)
                         {
                             keyBoard[CoinKeys[i]].Led.Color = Color.Yellow;
                         }
