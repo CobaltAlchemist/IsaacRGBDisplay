@@ -121,8 +121,7 @@ namespace k95TestSite
                     //ezpz check that eternal heart and do the thing
                     if (EternalHearts == 1)
                     {
-                        int location = Math.Min(RedHearts + 1, MaxRedHearts);
-                        keyBoard[HealthKeys[(location / 2) - 1]].Led.Color = Color.White;
+                        keyBoard[HealthKeys[(MaxRedHearts / 2) - 1]].Led.Color = Color.White;
                     }
                     if (ENABLE_G_KEYS)
                     {
